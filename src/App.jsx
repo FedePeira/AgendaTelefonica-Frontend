@@ -3,6 +3,8 @@ import personServices from './services/persons'
 import Filter from './components/Filter'
 import PersonsForm from './components/PersonsForm'
 import Persons from './components/Persons'
+import ErrorNotification from './components/ErrorNotification'
+import SuccessNotification from './components/SuccessNotification'
 
 // Componente App
 const App = () => {
@@ -10,16 +12,26 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setNewFilterName] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
     personServices
       .getAll()
       .then(initialPersons => {
         console.log('Persons available')
-        setPersons(initialPersons)
+        setSuccessMessage('Person available')
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 3000)
+        setPersons(initialPersons)  
       })
       .catch(error => {
-        console.error('Error trying to get persons: ', error);
+        setErrorMessage('Error trying to get persons')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 3000)
+        console.error(error);
       })
   }, [])
 
@@ -58,11 +70,19 @@ const App = () => {
         .then(returnedPerson => {
           console.log(returnedPerson)
           console.log('Person added')
+          setSuccessMessage('Person created')
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 3000)
           setNewName('')
           setNewNumber('')
         })
         .catch(error => {
-          console.error('Error creating person:', error);
+          setErrorMessage('Error trying to create person')
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 3000)
+          console.error(error);
         })
     }
   }
@@ -71,10 +91,18 @@ const App = () => {
     personServices.update(id, updatedPerson)
       .then(updatedPersonData => {
         console.log('Person updated:', updatedPersonData);
+        setSuccessMessage('Person updated')
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 3000)
       })
       .catch(error => {
-        console.error('Error updating person:', error);
-      });
+        setErrorMessage('Error trying to update person')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 3000)
+        console.error(error);
+      })
   }
 
   const deletePerson = (id) => {
@@ -86,7 +114,11 @@ const App = () => {
           console.log(deleteObject)
         })
         .catch(error => {
-          console.error('Error deleting person:', error);
+          setErrorMessage('Error trying to delete persons')
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 3000)
+          console.error(error);
         })
     } 
   }
@@ -105,6 +137,8 @@ const App = () => {
 
   return (
     <div>
+      <ErrorNotification message={errorMessage}/>
+      <SuccessNotification message={successMessage}/>
       <h2>Phonebook</h2>
         <Filter 
         value={filterName} 
