@@ -36,7 +36,7 @@ const App = () => {
   }, [])
 
   const filterPersons =  filterName === '' ? persons : persons.filter(person => person.name.includes(filterName))
-
+  
   const findPerson = ( name ) => {
     return persons.some(person => person.name === name);
   }
